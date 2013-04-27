@@ -40,7 +40,7 @@
 
 	<target name="test" description="execute all the tests of the project" depends="dist">
 		<mkdir dir="${report.tests}" />
-		<junit printsummary="withOutAndErr" haltonfailure="yes">
+		<junit printsummary="withOutAndErr" haltonfailure="no">
 			<classpath>
 				<pathelement location="${build.tests}" />
 				<pathelement path="${java.class.path}" />
@@ -51,7 +51,7 @@
 
 			<formatter type="plain" />
 
-			<batchtest fork="yes" todir="${report.tests}">
+			<batchtest fork="no" todir="${report.tests}">
 				<fileset dir="${src.tests}">
 					<include name="**/Teste*.java" />
 				</fileset>
