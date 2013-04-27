@@ -6,7 +6,7 @@ public interface Banco {
 
 	boolean aprovarSaque(Double Valor, String Conta);
 
-	boolean aprovarDepósito(Double Valor, String Conta); // TODO como avisar que o valor ja foi depositado? criar um novo método?	
+	boolean aprovarDepósito(Double Valor, String Conta); // TODO como avisar que o valor ja foi depositado? criar um novo metodo?	
 
 	boolean autorizarTransferência(String ContaDebitada, String ContaCreditada);
 

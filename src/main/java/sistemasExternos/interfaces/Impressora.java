@@ -2,6 +2,6 @@ package sistemasExternos.interfaces;
 
 public interface Impressora {
 	
-	void imprimirBoleto(Object boleto); // TODO será enviado um objeto boleto mesmo?	
+	void imprimirBoleto(Object boleto); // TODO sera enviado um objeto boleto mesmo?	
 	
 }
