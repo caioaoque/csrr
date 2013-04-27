@@ -40,7 +40,7 @@
 
 	<target name="test" description="execute all the tests of the project" depends="dist">
 		<mkdir dir="${report.tests}" />
-		<junit printsummary="yes" haltonfailure="yes">
+		<junit printsummary="withOutAndErr" haltonfailure="yes">
 			<classpath>
 				<pathelement location="${build.tests}" />
 				<pathelement path="${java.class.path}" />
