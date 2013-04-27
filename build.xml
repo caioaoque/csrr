@@ -44,6 +44,9 @@
 			<classpath>
 				<pathelement location="${build.tests}" />
 				<pathelement path="${java.class.path}" />
+				<fileset dir="lib">
+					<include name="**/*.jar" />
+				</fileset>
 			</classpath>
 
 			<formatter type="plain" />
