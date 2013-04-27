@@ -47,7 +47,7 @@
 
 			<formatter type="plain" />
 
-			<batchtest fork="yes" todir="${reports.tests}">
+			<batchtest fork="yes" todir="${report.tests}">
 				<fileset dir="${src.tests}">
 					<include name="**/Teste*.java" />
 				</fileset>
