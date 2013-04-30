@@ -6,6 +6,7 @@
 	<!-- set global properties for this build -->
 	<property name="src" location="src/main/java" />
 	<property name="src.tests" location="src/test/java" />
+	<property name="build.root" location="target" />
 	<property name="build" location="target/classes" />
 	<property name="build.tests" location="target/testClasses" />
 	<property name="report.tests" location="target/reports/tests" />
@@ -33,14 +34,23 @@
 	</target>
 
 	<target name="clean" description="clean up">
-		<!-- Delete the ${build} and ${dist} directory trees -->
-		<delete dir="${build}" />
+		<!-- Delete the ${build.root} and ${dist} directory trees -->
+		<delete dir="${build.root}" />
 		<delete dir="${dist}" />
 	</target>
 
 	<target name="test" description="execute all the tests of the project" depends="dist">
+		<mkdir dir="${build.tests}" />
 		<mkdir dir="${report.tests}" />
-		<junit printsummary="withOutAndErr" haltonfailure="no">
+		<javac srcdir="${src.tests}" destdir="${build.tests}">
+			<classpath>
+				<pathelement path="${java.class.path}" />
+				<fileset dir="lib">
+					<include name="**/*.jar" />
+				</fileset>
+			</classpath>
+		</javac>
+		<junit printsummary="withOutAndErr" haltonfailure="yes">
 			<classpath>
 				<pathelement location="${build.tests}" />
 				<pathelement path="${java.class.path}" />
@@ -48,12 +58,11 @@
 					<include name="**/*.jar" />
 				</fileset>
 			</classpath>
-
 			<formatter type="plain" />
 
-			<batchtest fork="no" todir="${report.tests}">
-				<fileset dir="${src.tests}">
-					<include name="**/Teste*.java" />
+			<batchtest fork="yes" todir="${report.tests}">
+				<fileset dir="${build.tests}">
+					<include name="**/Teste*.class" />
 				</fileset>
 			</batchtest>
 		</junit>
