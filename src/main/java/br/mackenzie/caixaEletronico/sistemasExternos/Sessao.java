@@ -1,4 +1,4 @@
-package sistemasExternos;
+package br.mackenzie.caixaEletronico.sistemasExternos;
 
 import java.util.Date;
         

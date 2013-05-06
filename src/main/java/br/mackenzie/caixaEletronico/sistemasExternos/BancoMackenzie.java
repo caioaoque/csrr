@@ -1,4 +1,4 @@
-package sistemasExternos;
+package br.mackenzie.caixaEletronico.sistemasExternos;
 
 import java.security.MessageDigest;
 import java.util.Calendar;
@@ -6,7 +6,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 
-import sistemasExternos.interfaces.Banco;
+import br.mackenzie.caixaEletronico.sistemasExternos.interfaces.Banco;
+
 
 public class BancoMackenzie extends Banco {
     

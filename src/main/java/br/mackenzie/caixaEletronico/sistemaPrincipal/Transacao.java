@@ -1,4 +1,4 @@
-package sistemaPrincipal;
+package br.mackenzie.caixaEletronico.sistemaPrincipal;
 
 public abstract class Transacao {
     

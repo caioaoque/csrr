@@ -1,4 +1,4 @@
-package sistemasExternos.interfaces;
+package br.mackenzie.caixaEletronico.sistemasExternos.interfaces;
 
 public abstract class Banco {
     public abstract String iniciarSessao(String conta, String senha);

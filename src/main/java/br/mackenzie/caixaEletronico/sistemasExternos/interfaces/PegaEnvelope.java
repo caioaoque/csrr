@@ -1,4 +1,4 @@
-package sistemasExternos.interfaces;
+package br.mackenzie.caixaEletronico.sistemasExternos.interfaces;
 
 public interface PegaEnvelope {
 
