@@ -1,4 +1,4 @@
-package sistemasExternos.interfaces;
+package sistemasExternos;
 
 import java.util.Date;
         

@@ -1,4 +1,4 @@
-package sistemasExternos.interfaces;
+package sistemasExternos;
 
 public class Conta {
     public String numeroConta;
