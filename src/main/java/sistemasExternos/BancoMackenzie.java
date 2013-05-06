@@ -1,9 +1,12 @@
 package sistemasExternos;
 
-import java.util.HashMap;
-import java.util.Date;
 import java.security.MessageDigest;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
+
+import sistemasExternos.interfaces.Banco;
 
 public class BancoMackenzie extends Banco {
     
@@ -85,7 +88,7 @@ public class BancoMackenzie extends Banco {
         
         GregorianCalendar gc=new GregorianCalendar();
         gc.setTime(m_sessoes.get(sessao).ultimaOperacao);
-        gc.add(gc.SECOND, 120);
+        gc.add(Calendar.SECOND, 120);
         
         if(gc.getTime().before(new Date()))
         {
