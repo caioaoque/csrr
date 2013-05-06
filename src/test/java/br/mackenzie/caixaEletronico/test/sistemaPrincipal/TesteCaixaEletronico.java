@@ -1,4 +1,4 @@
-package sistemaPrincipal;
+package br.mackenzie.caixaEletronico.test.sistemaPrincipal;
 
 import org.junit.Test;
 

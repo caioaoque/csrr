@@ -9,7 +9,9 @@ import java.util.HashMap;
 import br.mackenzie.caixaEletronico.sistemasExternos.interfaces.Banco;
 
 
-public class BancoMackenzie extends Banco {
+public class BancoMackenzie implements Banco {
+	
+	private String ultimoErro;
     
     public BancoMackenzie()
     {
@@ -24,7 +26,7 @@ public class BancoMackenzie extends Banco {
         conta.saldo = 10000;
         conta.cliente = cliente;
 
-        m_contas.put(conta.numeroConta, conta);
+        contas.put(conta.numeroConta, conta);
 
         Conta conta2 = new Conta();
         conta2.numeroConta = "002";
@@ -32,20 +34,20 @@ public class BancoMackenzie extends Banco {
         conta2.saldo = 400;
         conta2.cliente = cliente;
 
-        m_contas.put(conta2.numeroConta, conta2);
+        contas.put(conta2.numeroConta, conta2);
     }
     
     public String iniciarSessao(String conta, String senha)
     {
-        if(!m_contas.containsKey(conta))
+        if(!contas.containsKey(conta))
         {
-            setLastError("Conta invalida");
+            setUltimoErro("Conta inválida");
             return "";
         }
         
-        if(!m_contas.get(conta).senha.equals(senha))
+        if(!contas.get(conta).senha.equals(senha))
         {
-            setLastError("Senha invalida");
+            setUltimoErro("Senha inválida");
             return "";
         }
         
@@ -74,33 +76,34 @@ public class BancoMackenzie extends Banco {
         catch (Exception e){
         }
 
-        m_sessoes.put(sessao.chaveSessao, sessao);
+        sessoes.put(sessao.chaveSessao, sessao);
 
         return sessao.chaveSessao;
     }
     
-    boolean validaSessao(String sessao)
+    private boolean validaSessao(String sessao)
     {
-        if(!m_sessoes.containsKey(sessao))
+        if(!sessoes.containsKey(sessao))
         {
-            setLastError("Sessao invalida");
+            setUltimoErro("Sessão inválida");
             return false;
         }
         
         GregorianCalendar gc=new GregorianCalendar();
-        gc.setTime(m_sessoes.get(sessao).ultimaOperacao);
+        gc.setTime(sessoes.get(sessao).ultimaOperacao);
         gc.add(Calendar.SECOND, 120);
         
         if(gc.getTime().before(new Date()))
         {
-            m_sessoes.remove(sessao);
-            setLastError("Sessao expirada");
+            sessoes.remove(sessao);
+            setUltimoErro("Sessão expirada");
             return false;
         }
         
         return true;
     }
     
+    @Override
     public boolean aprovarSaque(String sessao, double valor)
     {
         if(!validaSessao(sessao))
@@ -108,11 +111,11 @@ public class BancoMackenzie extends Banco {
             return false;
         }
 
-        Conta conta = m_contas.get(m_sessoes.get(sessao).contaSessao);
+        Conta conta = contas.get(sessoes.get(sessao).contaSessao);
 
         if(conta.saldo < valor)
         {
-            setLastError("Saldo insuficiente");
+            setUltimoErro("Saldo insuficiente");
             return false;
         }
 
@@ -121,6 +124,14 @@ public class BancoMackenzie extends Banco {
         return true;
     }
     
-    private HashMap<String, Conta> m_contas = new HashMap<String, Conta>();
-    private HashMap<String, Sessao> m_sessoes = new HashMap<String, Sessao>();
+    private HashMap<String, Conta> contas = new HashMap<String, Conta>();
+    private HashMap<String, Sessao> sessoes = new HashMap<String, Sessao>();
+    
+	@Override
+	public String getUltimoErro() { return ultimoErro; }
+
+	@Override
+	public void setUltimoErro(String ultimoErro) {
+		this.ultimoErro = ultimoErro;
+	}
 }
