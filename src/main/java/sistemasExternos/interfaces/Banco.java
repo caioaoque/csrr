@@ -1,15 +1,11 @@
 package sistemasExternos.interfaces;
 
-public interface Banco {
-
-	boolean autenticarCliente(String Conta, String Senha);
-
-	boolean aprovarSaque(Double Valor, String Conta);
-
-	boolean aprovarDeposito(Double Valor, String Conta); // TODO como avisar que o valor ja foi depositado? criar um novo metodo?	
-
-	boolean autorizarTransferencia(String ContaDebitada, String ContaCreditada);
-
-	String obterSaldo(String Conta);	
-	
+public abstract class Banco {
+    public abstract String iniciarSessao(String conta, String senha);
+    public abstract boolean aprovarSaque(String sessao, double valor);
+    public String getLastError() { return m_lastError; }
+    public void setLastError(String lastError) { m_lastError = lastError; }
+    private String m_lastError;
+    
+    
 }
