@@ -117,6 +117,6 @@ public class BancoMackenzie extends Banco {
         return true;
     }
     
-    private HashMap<String, Conta> m_contas = new HashMap<>(); 
-    private HashMap<String, Sessao> m_sessoes = new HashMap<>();
+    private HashMap<String, Conta> m_contas = new HashMap<String, Conta>();
+    private HashMap<String, Sessao> m_sessoes = new HashMap<String, Sessao>();
 }
