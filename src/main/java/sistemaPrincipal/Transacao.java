@@ -1,5 +1,8 @@
 package sistemaPrincipal;
 
-public class Transacao {
+public abstract class Transacao {
+    
+    abstract void cancelarTransacao();
+    abstract void executarTransacao();
 
 }
