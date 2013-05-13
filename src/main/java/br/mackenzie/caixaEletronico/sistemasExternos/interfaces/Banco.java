@@ -1,18 +1,18 @@
 package br.mackenzie.caixaEletronico.sistemasExternos.interfaces;
 
-import br.mackenzie.caixaEletronico.sistemaPrincipal.Sessao;
-
 public interface Banco {
-    public abstract Sessao iniciarSessao(String conta, String senha);
-    
-    public abstract boolean aprovarSaque(String sessao, double valor);
-    
-    public void realizarTransferencia();
-    
-	boolean aprovarDeposito(Double Valor, String Conta); 	
+	String iniciarSessao(String cartao, String senha, String conta);
 
-	boolean autorizarTransferencia(String ContaDebitada, String ContaCreditada);
+	boolean sacar(String sessao, double valor);
 
-	Double obterSaldo(String Conta);    
-    
+	boolean iniciarDeposito(String sessao, double Valor);
+
+	boolean sinalizarDepositoEnvelope(String sessao);
+
+	boolean transferir(String sessao, String ContaCreditada, double valor);
+
+	double obterSaldo(String sessao);
+	
+	void finalizarSessao(String sessao);
+
 }
