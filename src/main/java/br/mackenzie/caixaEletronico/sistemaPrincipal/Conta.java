@@ -1,4 +1,4 @@
-package br.mackenzie.caixaEletronico.sistemasExternos;
+package br.mackenzie.caixaEletronico.sistemaPrincipal;
 
 public class Conta {
     public String numeroConta;
