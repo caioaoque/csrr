@@ -38,7 +38,12 @@ public class BancoMockFactory {
 		return banco;		
 	}	
 	
-	
+	public static Banco getBancoSenhaInvalida(){	
+		Banco banco = createMock(Banco.class);
+		expect(banco.iniciarSessao(anyObject(String.class), anyObject(String.class), anyObject(String.class))).andThrow(new Exception("Senha Invalida"));
+		replay(banco);		
+		return banco;		
+	}	
 	
 	
 }
