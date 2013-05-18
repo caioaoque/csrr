@@ -4,7 +4,7 @@
 		Build file do projeto CSRR
 	</description>
 	<!-- set global properties for this build -->
-	<property name="src" location="src/main/java" />
+	<property name="src" location="src/" />
 	<property name="src.tests" location="src/test/java" />
 	<property name="build.root" location="target" />
 	<property name="build" location="target/classes" />
@@ -47,9 +47,6 @@
 				<pathelement path="${java.class.path}" />
 				<fileset dir="lib">
 					<include name="**/*.jar" />
-				</fileset>
-				<fileset dir="${build}">
-					<include name="**/*.class" />
 				</fileset>
 			</classpath>
 		</javac>
