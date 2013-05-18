@@ -48,6 +48,9 @@
 				<fileset dir="lib">
 					<include name="**/*.jar" />
 				</fileset>
+				<fileset dir="${build}">
+					<include name="**/*.class" />
+				</fileset>
 			</classpath>
 		</javac>
 		<junit printsummary="withOutAndErr" haltonfailure="yes">
@@ -56,9 +59,6 @@
 				<pathelement path="${java.class.path}" />
 				<fileset dir="lib">
 					<include name="**/*.jar" />
-				</fileset>
-				<fileset dir="${build}">
-					<include name="**/*.class" />
 				</fileset>
 			</classpath>
 			<formatter type="plain" />
