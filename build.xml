@@ -57,7 +57,7 @@
 				<fileset dir="lib">
 					<include name="**/*.jar" />
 				</fileset>
-				<fileset dir="build">
+				<fileset dir="${build}">
 					<include name="**/*.class" />
 				</fileset>
 			</classpath>
