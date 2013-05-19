@@ -45,17 +45,21 @@
 		<javac srcdir="${src.tests}" destdir="${build.tests}">
 			<classpath>
 				<pathelement path="${java.class.path}" />
+				<pathelement location="${build}" />
 				<fileset dir="lib">
 					<include name="**/*.jar" />
+					<exclude name="**/*-sources.jar" />
 				</fileset>
 			</classpath>
 		</javac>
 		<junit printsummary="withOutAndErr" haltonfailure="yes">
 			<classpath>
+				<pathelement location="${build}" />
 				<pathelement location="${build.tests}" />
 				<pathelement path="${java.class.path}" />
 				<fileset dir="lib">
 					<include name="**/*.jar" />
+					<exclude name="**/*-sources.jar" />
 				</fileset>
 			</classpath>
 			<formatter type="plain" />

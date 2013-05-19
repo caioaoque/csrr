@@ -11,7 +11,7 @@ import br.mackenzie.caixaEletronico.test.mocks.BancoMockFactory;
 public class TesteCaixaEletronico {
 	
 	@Test
-	public void TesteValidacaoSenhaInvalida() {
+	public void TesteValidacaoSenhaInvalida() throws Exception {
 		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoSenhaInvalida());
 		try{
 			caixa.sacarValor(0, "", new Sessao());	
