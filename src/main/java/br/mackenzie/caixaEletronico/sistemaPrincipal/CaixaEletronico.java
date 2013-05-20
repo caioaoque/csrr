@@ -11,6 +11,7 @@ public class CaixaEletronico {
 	private final Console console;
 	private Estado estado;
 	private double valorDisponivel;
+	private String sessao;
 
 	public CaixaEletronico(Banco banco, Console console) {
 		this.banco = banco;
@@ -18,10 +19,17 @@ public class CaixaEletronico {
 	}
 
 	public boolean iniciarSessao(String cartao, String senha, String conta) {
-		return false;
+		try {
+			this.sessao = banco.iniciarSessao(cartao, senha, conta);
+			return true;
+		} catch (Exception ex) {
+			this.sessao = null;
+			console.imprimir(ex.getMessage());
+			return false;
+		}
 	}
 
-	public boolean sacarValor(double valor, String conta, Sessao sessao) {
+	public boolean sacarValor(double valor, String sessao) {
 		if (valor <= 0) {
 			console.imprimir("Valor inválido. Entre com um valor maior que zero.");
 		} else if (valor % 10 != 0) {
@@ -30,7 +38,7 @@ public class CaixaEletronico {
 			console.imprimir("O valor solicitado é superior ao disponível para saque.");
 		}
 		try {
-			return banco.sacar(sessao.getChave(), valor);
+			return banco.sacar(sessao, valor);
 		} catch (Exception ex) {
 			console.imprimir(ex.getMessage());
 			return false;
