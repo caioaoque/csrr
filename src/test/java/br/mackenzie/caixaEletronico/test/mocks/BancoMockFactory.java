@@ -8,7 +8,7 @@ import br.mackenzie.caixaEletronico.sistemasExternos.interfaces.Banco;
 
 public class BancoMockFactory {
 
-	public Banco getBancoNaoAprovaSaque() {
+	public Banco getBancoNaoAprovaSaque() throws Exception {
 		Banco banco = createMock(Banco.class);
 		expect(banco.sacar(anyObject(String.class), anyObject(Double.class)))
 				.andThrow(new Exception("Saque Não Aprovado"));
@@ -16,7 +16,7 @@ public class BancoMockFactory {
 		return banco;
 	}
 
-	public Banco getBancoAprovaSaque() {
+	public Banco getBancoAprovaSaque() throws Exception {
 		Banco banco = createMock(Banco.class);
 		expect(banco.sacar(anyObject(String.class), anyObject(Double.class)))
 				.andReturn(true);
@@ -24,7 +24,7 @@ public class BancoMockFactory {
 		return banco;
 	}
 
-	public Banco getBancoNaoAprovaDeposito() {
+	public Banco getBancoNaoAprovaDeposito() throws Exception {
 		Banco banco = createMock(Banco.class);
 		expect(
 				banco.iniciarDeposito(anyObject(String.class),
@@ -34,7 +34,7 @@ public class BancoMockFactory {
 		return banco;
 	}
 
-	public Banco getBancoAprovaDeposito() {
+	public Banco getBancoAprovaDeposito() throws Exception {
 		Banco banco = createMock(Banco.class);
 		expect(
 				banco.iniciarDeposito(anyObject(String.class),
