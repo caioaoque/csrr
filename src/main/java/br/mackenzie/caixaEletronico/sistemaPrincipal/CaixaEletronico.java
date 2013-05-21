@@ -2,6 +2,7 @@ package br.mackenzie.caixaEletronico.sistemaPrincipal;
 
 import br.mackenzie.caixaEletronico.sistemasExternos.interfaces.Banco;
 import br.mackenzie.caixaEletronico.sistemasExternos.interfaces.Console;
+import br.mackenzie.caixaEletronico.sistemasExternos.interfaces.Dispenser;
 
 public class CaixaEletronico {
 
@@ -16,10 +17,12 @@ public class CaixaEletronico {
 	private Estado estado;
 	private double valorDisponivel;
 	private String sessao;
+	private Dispenser dispenser;
 
-	public CaixaEletronico(Banco banco, Console console) {
+	public CaixaEletronico(Banco banco, Console console, Dispenser dispenser) {
 		this.banco = banco;
 		this.console = console;
+		this.dispenser = dispenser;
 	}
 
 	public boolean iniciarSessao(String cartao, String senha, String conta) {
@@ -42,7 +45,8 @@ public class CaixaEletronico {
 			console.imprimir("O valor solicitado é superior ao disponível para saque.");
 		} else {
 			try {
-				return banco.sacar(sessao, valor);
+				banco.sacar(sessao, valor);
+				dispenser.darNotas(valor);
 			} catch (Exception ex) {
 				console.imprimir(ex.getMessage());
 			}
@@ -56,7 +60,8 @@ public class CaixaEletronico {
 			console.imprimir(VALOR_MENOR_OU_IGUAL_A_ZERO);
 		} else {
 			try {
-				return banco.iniciarDeposito(sessao, contaCreditada, valor);
+				banco.iniciarDeposito(sessao, contaCreditada, valor);
+				return true;
 			} catch (Exception ex) {
 				console.imprimir(ex.getMessage());
 			}
@@ -66,11 +71,15 @@ public class CaixaEletronico {
 
 	public boolean depositarEnvelope(String sessao) {
 		try {
-			return banco.sinalizarDepositoEnvelope(sessao);
+			banco.sinalizarDepositoEnvelope(sessao);
+			return true;
 		} catch (Exception ex) {
 			console.imprimir(ex.getMessage());
 		}
 		return false;
 	}
 
+	public boolean transferir() {
+		return false;
+	}
 }
