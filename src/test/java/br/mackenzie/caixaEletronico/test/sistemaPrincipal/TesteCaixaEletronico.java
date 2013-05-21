@@ -13,6 +13,7 @@ import org.junit.Test;
 import br.mackenzie.caixaEletronico.sistemaPrincipal.CaixaEletronico;
 import br.mackenzie.caixaEletronico.test.mocks.BancoMockFactory;
 import br.mackenzie.caixaEletronico.test.mocks.ConsoleImpl;
+import br.mackenzie.caixaEletronico.test.mocks.DispenserMockFactory;
 
 public class TesteCaixaEletronico {
 	
@@ -33,9 +34,9 @@ public class TesteCaixaEletronico {
 	
 	@Test
 	public void TesteValidacaoSenhaInvalida() throws Exception {
-		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoSenhaInvalida(), new ConsoleImpl());		
+		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoSenhaInvalida(), new ConsoleImpl(), DispenserMockFactory.getDispenserOK());		
 		boolean result = caixa.iniciarSessao("12345678", "aaaaa", "98765");		
-		assertFalse(result);		
-		assertEquals(outContent,"Senha Invalida");				
+		assertFalse(result);	
+		assertEquals(outContent.toString(),"Senha Invalida");
 	}
 }
