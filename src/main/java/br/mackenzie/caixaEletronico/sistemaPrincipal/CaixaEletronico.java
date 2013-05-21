@@ -78,6 +78,35 @@ public class CaixaEletronico {
 		}
 		return false;
 	}
+	
+	public boolean ligarCaixa(double valorInicial)
+	{
+		if(valorInicial < 0)
+		{
+			console.imprimir("Valor nao pode ser menor do que zero :( ");
+			return false;
+		}
+		valorDisponivel = valorInicial;
+		estado = Estado.OPERANTE;
+		return true;
+	}
+	
+	public boolean desligarCaixa()
+	{
+		if(!sessao.isEmpty())
+		{
+			try{
+				banco.finalizarSessao(sessao);
+			} catch (Exception ex) {
+				console.imprimir(ex.getMessage());
+				return false;
+			}
+		}
+		
+		estado = Estado.INOPERANTE;
+		return true;
+			
+	}
 
 	public boolean transferir() {
 		return false;
