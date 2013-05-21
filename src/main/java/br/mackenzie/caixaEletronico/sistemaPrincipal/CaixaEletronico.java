@@ -3,6 +3,8 @@ package br.mackenzie.caixaEletronico.sistemaPrincipal;
 import br.mackenzie.caixaEletronico.sistemasExternos.interfaces.Banco;
 import br.mackenzie.caixaEletronico.sistemasExternos.interfaces.Console;
 import br.mackenzie.caixaEletronico.sistemasExternos.interfaces.Dispenser;
+import br.mackenzie.caixaEletronico.sistemasExternos.interfaces.Impressora;
+import br.mackenzie.caixaEletronico.sistemasExternos.interfaces.Log;
 
 public class CaixaEletronico {
 
@@ -18,11 +20,16 @@ public class CaixaEletronico {
 	private double valorDisponivel;
 	private String sessao;
 	private Dispenser dispenser;
+	private Log log;
+	private Impressora impressora;
 
-	public CaixaEletronico(Banco banco, Console console, Dispenser dispenser) {
+	public CaixaEletronico(Banco banco, Console console, Dispenser dispenser,
+			Log log, Impressora impressora) {
 		this.banco = banco;
 		this.console = console;
 		this.dispenser = dispenser;
+		this.log = log;
+		this.impressora = impressora;
 	}
 
 	public boolean iniciarSessao(String cartao, String senha, String conta) {
@@ -78,11 +85,22 @@ public class CaixaEletronico {
 		}
 		return false;
 	}
-	
-	public boolean ligarCaixa(double valorInicial)
-	{
-		if(valorInicial < 0)
-		{
+
+	public boolean transferir(String sessao, String contaCreditada, double valor) {
+		if (valor <= 0) {
+			console.imprimir(VALOR_MENOR_OU_IGUAL_A_ZERO);
+		}
+		try {
+			banco.transferir(sessao, contaCreditada, valor);
+			return true;
+		} catch (Exception ex) {
+			console.imprimir(ex.getMessage());
+		}
+		return false;
+	}
+
+	public boolean ligarCaixa(double valorInicial) {
+		if (valorInicial < 0) {
 			console.imprimir("Valor nao pode ser menor do que zero :( ");
 			return false;
 		}
@@ -90,25 +108,20 @@ public class CaixaEletronico {
 		estado = Estado.OPERANTE;
 		return true;
 	}
-	
-	public boolean desligarCaixa()
-	{
-		if(!sessao.isEmpty())
-		{
-			try{
+
+	public boolean desligarCaixa() {
+		if (!sessao.isEmpty()) {
+			try {
 				banco.finalizarSessao(sessao);
 			} catch (Exception ex) {
 				console.imprimir(ex.getMessage());
 				return false;
 			}
 		}
-		
+
 		estado = Estado.INOPERANTE;
 		return true;
-			
+
 	}
 
-	public boolean transferir() {
-		return false;
-	}
 }

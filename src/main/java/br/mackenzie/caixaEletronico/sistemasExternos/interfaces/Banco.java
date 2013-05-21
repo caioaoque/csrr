@@ -9,7 +9,7 @@ public interface Banco {
 
 	void sinalizarDepositoEnvelope(String sessao) throws Exception;
 
-	void transferir(String sessao, String ContaCreditada, double valor) throws Exception;
+	void transferir(String sessao, String contaCreditada, double valor) throws Exception;
 
 	double obterSaldo(String sessao) throws Exception;
 	
