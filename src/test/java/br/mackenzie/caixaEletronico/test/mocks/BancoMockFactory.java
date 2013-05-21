@@ -8,47 +8,9 @@ import br.mackenzie.caixaEletronico.sistemasExternos.interfaces.Banco;
 
 public class BancoMockFactory {
 
-	public Banco getBancoNaoAprovaSaque() throws Exception {
-		Banco banco = createMock(Banco.class);
-		expect(banco.sacar(anyObject(String.class), anyObject(Double.class)))
-				.andThrow(new Exception("Saque Não Aprovado"));
-		replay(banco);
-		return banco;
-	}
-
-	public Banco getBancoAprovaSaque() throws Exception {
-		Banco banco = createMock(Banco.class);
-		expect(banco.sacar(anyObject(String.class), anyObject(Double.class)))
-				.andReturn(true);
-		replay(banco);
-		return banco;
-	}
-
-	public Banco getBancoNaoAprovaDeposito() throws Exception {
-		Banco banco = createMock(Banco.class);
-		expect(
-				banco.iniciarDeposito(anyObject(String.class),
-						anyObject(Double.class))).andThrow(
-				new Exception("Deposito Não Aprovado"));
-		replay(banco);
-		return banco;
-	}
-
-	public Banco getBancoAprovaDeposito() throws Exception {
-		Banco banco = createMock(Banco.class);
-		expect(
-				banco.iniciarDeposito(anyObject(String.class),
-						anyObject(Double.class))).andReturn(true);
-		replay(banco);
-		return banco;
-	}
-
 	public static Banco getBancoSenhaInvalida() throws Exception {
 		Banco banco = createMock(Banco.class);
-		expect(
-				banco.iniciarSessao(anyObject(String.class),
-						anyObject(String.class), anyObject(String.class)))
-				.andThrow(new Exception("Senha Invalida"));
+		expect(banco.iniciarSessao(anyObject(String.class),	anyObject(String.class), anyObject(String.class))).andThrow(new Exception("Senha Invalida"));
 		replay(banco);
 		return banco;
 	}
