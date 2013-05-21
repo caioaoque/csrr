@@ -8,7 +8,7 @@ public class ConsoleImpl implements Console {
 
 	@Override
 	public void imprimir(String texto) {
-		System.out.println(texto);
+		System.out.print(texto);
 	}
 
 	@Override

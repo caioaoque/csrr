@@ -5,7 +5,7 @@ public interface Banco {
 
 	boolean sacar(String sessao, double valor) throws Exception;
 
-	boolean iniciarDeposito(String sessao, double Valor) throws Exception;
+	boolean iniciarDeposito(String sessao, String contaCreditada, double valor) throws Exception;
 
 	boolean sinalizarDepositoEnvelope(String sessao) throws Exception;
 

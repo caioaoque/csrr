@@ -1,6 +1,6 @@
 package br.mackenzie.caixaEletronico.test.sistemaPrincipal;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import java.io.ByteArrayOutputStream;
