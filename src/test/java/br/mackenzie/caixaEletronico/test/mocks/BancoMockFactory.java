@@ -14,5 +14,12 @@ public class BancoMockFactory {
 		replay(banco);
 		return banco;
 	}
+	
+	public static Banco getBancoNaoaprovaSaque() throws Exception {
+		Banco banco = createMock(Banco.class);
+		expect(banco.iniciarSessao(anyObject(String.class),	anyObject(String.class), anyObject(String.class))).andThrow(new Exception("Saque Nao Aprovado."));
+		replay(banco);
+		return banco;
+	}
 
 }

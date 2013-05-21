@@ -39,4 +39,23 @@ public class TesteCaixaEletronico {
 		assertFalse(result);	
 		assertEquals(outContent.toString(),"Senha Invalida");
 	}
+	
+	@Test
+	public void TesteSaqueCaixaSemDinheiro() throws Exception {
+		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoSenhaInvalida(), new ConsoleImpl(), DispenserMockFactory.getDispenserOK());
+		boolean result = caixa.sacarValor(200000.0, "sessao");		
+		assertFalse(result);	
+		assertEquals(outContent.toString(),"O valor solicitado é superior ao disponível para saque.");
+	}
+	
+	
+	@Test
+	public void TesteBancoNaoAprovaSaque() throws Exception {
+		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoSenhaInvalida(), new ConsoleImpl(), DispenserMockFactory.getDispenserOK());
+		boolean result = caixa.sacarValor(1, "sessao");		
+		assertFalse(result);	
+		assertEquals(outContent.toString(),"Saque Nao Aprovado.");
+	}
+	
+	
 }
