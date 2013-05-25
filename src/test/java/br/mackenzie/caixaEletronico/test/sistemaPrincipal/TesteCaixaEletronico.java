@@ -14,6 +14,8 @@ import br.mackenzie.caixaEletronico.sistemaPrincipal.CaixaEletronico;
 import br.mackenzie.caixaEletronico.test.mocks.BancoMockFactory;
 import br.mackenzie.caixaEletronico.test.mocks.ConsoleImpl;
 import br.mackenzie.caixaEletronico.test.mocks.DispenserMockFactory;
+import br.mackenzie.caixaEletronico.test.mocks.ImpressoraMockFactory;
+import br.mackenzie.caixaEletronico.test.mocks.LogMockFactory;
 
 public class TesteCaixaEletronico {
 	
@@ -34,7 +36,7 @@ public class TesteCaixaEletronico {
 	
 	@Test
 	public void TesteValidacaoSenhaInvalida() throws Exception {
-		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoSenhaInvalida(), new ConsoleImpl(), DispenserMockFactory.getDispenserOK());		
+		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoSenhaInvalida(), new ConsoleImpl(), DispenserMockFactory.getDispenserOK(), LogMockFactory.getLogOK(), ImpressoraMockFactory.getImpressoraOK() );		
 		boolean result = caixa.iniciarSessao("12345678", "aaaaa", "98765");		
 		assertFalse(result);	
 		assertEquals(outContent.toString(),"Senha Invalida");
@@ -42,7 +44,7 @@ public class TesteCaixaEletronico {
 	
 	@Test
 	public void TesteSaqueCaixaSemDinheiro() throws Exception {
-		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoSenhaInvalida(), new ConsoleImpl(), DispenserMockFactory.getDispenserOK());
+		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoSenhaInvalida(), new ConsoleImpl(), DispenserMockFactory.getDispenserOK(), LogMockFactory.getLogOK(), ImpressoraMockFactory.getImpressoraOK());
 		boolean result = caixa.sacarValor(200000.0, "sessao");		
 		assertFalse(result);	
 		assertEquals(outContent.toString(),"O valor solicitado é superior ao disponível para saque.");
@@ -51,7 +53,7 @@ public class TesteCaixaEletronico {
 	
 	@Test
 	public void TesteBancoNaoAprovaSaque() throws Exception {
-		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoSenhaInvalida(), new ConsoleImpl(), DispenserMockFactory.getDispenserOK());
+		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoSenhaInvalida(), new ConsoleImpl(), DispenserMockFactory.getDispenserOK(), LogMockFactory.getLogOK(), ImpressoraMockFactory.getImpressoraOK());
 		boolean result = caixa.sacarValor(1, "sessao");		
 		assertFalse(result);	
 		assertEquals(outContent.toString(),"Saque Nao Aprovado.");
