@@ -44,5 +44,14 @@ public class BancoMockFactory {
 		return banco;
 	}
 
+	public static Banco getBancoNaoRealizaTransferencia() throws Exception {
+		Sessao sessao = new Sessao("111111");
+		Banco banco = createMock(Banco.class);
+		expect(banco.iniciarSessao(anyObject(String.class),	anyObject(String.class), anyObject(String.class))).andStubReturn(sessao);
+		banco.transferir(anyObject(Sessao.class), anyObject(String.class), anyObject(String.class), anyDouble());	
+		expectLastCall().andThrow(new Exception("Transferencia nao aprovada. O saldo é inferior ao valor da transferencia!"));
+		replay(banco);
+		return banco;
+	}	
 	
 }

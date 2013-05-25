@@ -80,7 +80,45 @@ public class TesteCaixaEletronico {
 		assertEquals(outContent.toString(),"Deposito Nao Aprovado.");
 	}
 	
+	@Test
+	public void TesteTransferenciaSemSaldo() throws Exception {
+		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoNaoRealizaTransferencia(), new ConsoleImpl(), DispenserMockFactory.getDispenserOK(), LogMockFactory.getLogOK(), ImpressoraMockFactory.getImpressoraOK());
+		boolean ligado = caixa.ligarCaixa(500);
+		assertTrue(ligado);
+		boolean result2 = caixa.iniciarSessao("12345678", "aaaaa", "98765");		
+		assertTrue(result2);
+		boolean result = caixa.transferir(new Sessao("111111"), "aaaaa", "bbbbb", 10000.0);	
+		assertFalse(result);	
+		assertEquals(outContent.toString(),"Transferencia nao aprovada. O saldo é inferior ao valor da transferencia!");
+	}
 	
 	
+	
+	
+	
+	
+	
+	
+	@Test
+	public void TesteLigarCaixaOK() throws Exception {
+		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoOK(), new ConsoleImpl(), DispenserMockFactory.getDispenserOK(), LogMockFactory.getLogOK(), ImpressoraMockFactory.getImpressoraOK());
+		boolean ligado = caixa.ligarCaixa(500);
+		assertTrue(ligado);
+	}
+	
+	@Test
+	public void TesteLigarCaixaErroValor() throws Exception {
+		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoOK(), new ConsoleImpl(), DispenserMockFactory.getDispenserOK(), LogMockFactory.getLogOK(), ImpressoraMockFactory.getImpressoraOK());
+		boolean ligado = caixa.ligarCaixa(-500);
+		assertFalse(ligado);
+	}
+	
+	@Test
+	public void TesteDesligarCaixaOK() throws Exception {
+		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoOK(), new ConsoleImpl(), DispenserMockFactory.getDispenserOK(), LogMockFactory.getLogOK(), ImpressoraMockFactory.getImpressoraOK());
+		boolean desligado = caixa.desligarCaixa();
+		assertTrue(desligado);
+	}
+		
 	
 }
