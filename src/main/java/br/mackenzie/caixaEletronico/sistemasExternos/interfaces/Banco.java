@@ -1,18 +1,20 @@
 package br.mackenzie.caixaEletronico.sistemasExternos.interfaces;
 
+import br.mackenzie.caixaEletronico.objetosCompartilhados.Sessao;
+
 public interface Banco {
-	String iniciarSessao(String cartao, String senha, String conta) throws Exception;
+	Sessao iniciarSessao(String cartao, String senha, String conta) throws Exception;
 
-	void sacar(String sessao, double valor) throws Exception;
+	void sacar(Sessao sessao, String conta, double valor) throws Exception;
 
-	void iniciarDeposito(String sessao, String contaCreditada, double valor) throws Exception;
+	void iniciarDeposito(Sessao sessao, String conta, double valor) throws Exception;
 
-	void sinalizarDepositoEnvelope(String sessao) throws Exception;
+	void sinalizarDepositoEnvelope(Sessao sessao, String conta) throws Exception;
 
-	void transferir(String sessao, String contaCreditada, double valor) throws Exception;
+	void transferir(Sessao sessao, String contaDebitada, String contaCreditada, double valor) throws Exception;
 
-	double obterSaldo(String sessao) throws Exception;
+	double obterSaldo(Sessao sessao, String conta) throws Exception;
 	
-	void finalizarSessao(String sessao) throws Exception;
+	void finalizarSessao(Sessao sessao) throws Exception;
 
 }

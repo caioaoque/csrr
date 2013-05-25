@@ -1,5 +1,6 @@
 package br.mackenzie.caixaEletronico.sistemaPrincipal;
 
+import br.mackenzie.caixaEletronico.objetosCompartilhados.Sessao;
 import br.mackenzie.caixaEletronico.sistemasExternos.interfaces.Banco;
 import br.mackenzie.caixaEletronico.sistemasExternos.interfaces.Console;
 import br.mackenzie.caixaEletronico.sistemasExternos.interfaces.Dispenser;
@@ -8,7 +9,13 @@ import br.mackenzie.caixaEletronico.sistemasExternos.interfaces.Log;
 
 public class CaixaEletronico {
 
+	private static final String MENSAGEM_OPERACAO_FALHA = "Erro ao realizar operação de %s.";
+	private static final String OPERACAO_SAQUE = "saque";
+	private static final String MESAGEM_OPERACAO_SUCESSO = "A operação de %s foi realizada com sucesso. %s";
+	private static final String MENSAGEM_SACAR_VALOR_SUPERIOR_AO_DISPONIVEL = "O valor solicitado é superior ao disponível para saque.";
+	private static final String MENSAGEM_SACAR_VALOR_DEVE_SER_MULTIPLO_DE_10 = "Valor inválido. Entre com um valor múltiplo de dez.";
 	private static final String VALOR_MENOR_OU_IGUAL_A_ZERO = "Valor inválido. Entre com um valor maior que zero.";
+	private static final String MENSAGEM_CAIXA_INOPERANTE = "Não foi possível realizar a operação pois o caixa não se encontra operante no momento.";
 
 	private static enum Estado {
 		OPERANTE, INOPERANTE;
@@ -16,15 +23,14 @@ public class CaixaEletronico {
 
 	private final Banco banco;
 	private final Console console;
-	private Estado estado;
+	private Estado estado = Estado.INOPERANTE;
 	private double valorDisponivel;
-	private String sessao;
+	private Sessao sessao;
 	private Dispenser dispenser;
 	private Log log;
 	private Impressora impressora;
 
-	public CaixaEletronico(Banco banco, Console console, Dispenser dispenser,
-			Log log, Impressora impressora) {
+	public CaixaEletronico(Banco banco, Console console, Dispenser dispenser, Log log, Impressora impressora) {
 		this.banco = banco;
 		this.console = console;
 		this.dispenser = dispenser;
@@ -43,31 +49,41 @@ public class CaixaEletronico {
 		}
 	}
 
-	public boolean sacarValor(double valor, String sessao) {
-		if (valor <= 0) {
+	public boolean sacarValor(double valor, Sessao sessao, String conta) {
+
+		if (estado != Estado.OPERANTE) {
+			throw new IllegalStateException(MENSAGEM_CAIXA_INOPERANTE);
+		} else if (valor <= 0) {
 			console.imprimir(VALOR_MENOR_OU_IGUAL_A_ZERO);
 		} else if (valor % 10 != 0) {
-			console.imprimir("Valor inválido. Entre com um valor múltiplo de dez.");
+			console.imprimir(MENSAGEM_SACAR_VALOR_DEVE_SER_MULTIPLO_DE_10);
 		} else if (valor > this.valorDisponivel) {
-			console.imprimir("O valor solicitado é superior ao disponível para saque.");
+			console.imprimir(MENSAGEM_SACAR_VALOR_SUPERIOR_AO_DISPONIVEL);
 		} else {
 			try {
-				banco.sacar(sessao, valor);
+				banco.sacar(sessao, conta, valor);
 				dispenser.darNotas(valor);
+				StringBuilder complementoMensagem = new StringBuilder("Número do cartão: ");
+				complementoMensagem.append(sessao.getCartao());
+				complementoMensagem.append("Número da conta: ");
+				// TODO Continuar
+
+				log.logarOperacao(MESAGEM_OPERACAO_SUCESSO, OPERACAO_SAQUE, complementoMensagem);
+				// impressora.
 			} catch (Exception ex) {
 				console.imprimir(ex.getMessage());
+				log.logarTransacao(MENSAGEM_OPERACAO_FALHA, ex, OPERACAO_SAQUE);
 			}
 		}
 		return false;
 	}
 
-	public boolean depositarValor(double valor, String contaCreditada,
-			String sessao) {
+	public boolean depositarValor(double valor, String conta, Sessao sessao) {
 		if (valor <= 0) {
 			console.imprimir(VALOR_MENOR_OU_IGUAL_A_ZERO);
 		} else {
 			try {
-				banco.iniciarDeposito(sessao, contaCreditada, valor);
+				banco.iniciarDeposito(sessao, conta, valor);
 				return true;
 			} catch (Exception ex) {
 				console.imprimir(ex.getMessage());
@@ -76,9 +92,9 @@ public class CaixaEletronico {
 		return false;
 	}
 
-	public boolean depositarEnvelope(String sessao) {
+	public boolean depositarEnvelope(Sessao sessao, String conta) {
 		try {
-			banco.sinalizarDepositoEnvelope(sessao);
+			banco.sinalizarDepositoEnvelope(sessao, conta);
 			return true;
 		} catch (Exception ex) {
 			console.imprimir(ex.getMessage());
@@ -86,12 +102,12 @@ public class CaixaEletronico {
 		return false;
 	}
 
-	public boolean transferir(String sessao, String contaCreditada, double valor) {
+	public boolean transferir(Sessao sessao, String contaDebitada, String contaCreditada, double valor) {
 		if (valor <= 0) {
 			console.imprimir(VALOR_MENOR_OU_IGUAL_A_ZERO);
 		}
 		try {
-			banco.transferir(sessao, contaCreditada, valor);
+			banco.transferir(sessao, contaDebitada, contaCreditada, valor);
 			return true;
 		} catch (Exception ex) {
 			console.imprimir(ex.getMessage());
@@ -110,7 +126,7 @@ public class CaixaEletronico {
 	}
 
 	public boolean desligarCaixa() {
-		if (!sessao.isEmpty()) {
+		if (sessao != null) {
 			try {
 				banco.finalizarSessao(sessao);
 			} catch (Exception ex) {
