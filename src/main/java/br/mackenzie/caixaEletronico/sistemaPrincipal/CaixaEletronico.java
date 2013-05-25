@@ -19,6 +19,7 @@ public class CaixaEletronico {
 	private static final String OPERACAO_DEPOSITAR_ENVELOPE = "depósito de envelope";
 	private static final String OPERACAO_TRANSFERENCIA = "transferência";
 	private static final String OPERACAO_INICIALIZAR_CAIXA = "inicialização do caixa eletrônico";
+	private static final String OPERACAO_ENCERRAR_CAIXA = "encerramento do caixa eletrônico";
 	private static final String PARAMETRO_SALDO_ATUAL = ", saldo atual: ";
 	private static final String PARAMETRO_VALOR_SACADO = ", valor sacado: ";
 	private static final String PARAMETRO_VALOR_DEPOSITADO = ", valor depositado: ";
@@ -36,7 +37,7 @@ public class CaixaEletronico {
 	private static final String MENSAGEM_SACAR_VALOR_SUPERIOR_AO_DISPONIVEL = "O valor solicitado é superior ao disponível para saque.";
 	private static final String MENSAGEM_SACAR_VALOR_DEVE_SER_MULTIPLO_DE_10 = "Valor inválido. Entre com um valor múltiplo de dez.";
 	private static final String MENSAGEM_VALOR_MENOR_QUE_ZERO = "Valor inválido. Entre com um valor maior ou igual a zero.";
-	private static final String MENNSAGEM_VALOR_MENOR_OU_IGUAL_A_ZERO = "Valor inválido. Entre com um valor maior que zero.";
+	private static final String MENSAGEM_VALOR_MENOR_OU_IGUAL_A_ZERO = "Valor inválido. Entre com um valor maior que zero.";
 	private static final String MENSAGEM_CAIXA_INOPERANTE = "Não foi possível realizar a operação pois o caixa não se encontra operante no momento.";
 
 	private static enum Estado {
@@ -83,8 +84,8 @@ public class CaixaEletronico {
 		if (estado != Estado.OPERANTE) {
 			throw new IllegalStateException(MENSAGEM_CAIXA_INOPERANTE);
 		} else if (valor <= 0) {
-			console.imprimir(MENNSAGEM_VALOR_MENOR_OU_IGUAL_A_ZERO);
-			log.logarOperacao(MENSAGEM_OPERACAO_FALHA_ERRO, OPERACAO_SAQUE, MENNSAGEM_VALOR_MENOR_OU_IGUAL_A_ZERO, complementoMensagem);
+			console.imprimir(MENSAGEM_VALOR_MENOR_OU_IGUAL_A_ZERO);
+			log.logarOperacao(MENSAGEM_OPERACAO_FALHA_ERRO, OPERACAO_SAQUE, MENSAGEM_VALOR_MENOR_OU_IGUAL_A_ZERO, complementoMensagem);
 		} else if (valor % 10 != 0) {
 			console.imprimir(MENSAGEM_SACAR_VALOR_DEVE_SER_MULTIPLO_DE_10);
 			log.logarOperacao(MENSAGEM_OPERACAO_FALHA_ERRO, OPERACAO_SAQUE, MENSAGEM_SACAR_VALOR_DEVE_SER_MULTIPLO_DE_10,
@@ -135,8 +136,8 @@ public class CaixaEletronico {
 		if (estado != Estado.OPERANTE) {
 			throw new IllegalStateException(MENSAGEM_CAIXA_INOPERANTE);
 		} else if (valor <= 0) {
-			console.imprimir(MENNSAGEM_VALOR_MENOR_OU_IGUAL_A_ZERO);
-			log.logarOperacao(MENSAGEM_OPERACAO_FALHA_ERRO, OPERACAO_INICIALIZACAO_DEPOSITO, MENNSAGEM_VALOR_MENOR_OU_IGUAL_A_ZERO,
+			console.imprimir(MENSAGEM_VALOR_MENOR_OU_IGUAL_A_ZERO);
+			log.logarOperacao(MENSAGEM_OPERACAO_FALHA_ERRO, OPERACAO_INICIALIZACAO_DEPOSITO, MENSAGEM_VALOR_MENOR_OU_IGUAL_A_ZERO,
 					complementoMensagem);
 		} else {
 			try {
@@ -186,8 +187,8 @@ public class CaixaEletronico {
 		if (estado != Estado.OPERANTE) {
 			throw new IllegalStateException(MENSAGEM_CAIXA_INOPERANTE);
 		} else if (valor <= 0) {
-			console.imprimir(MENNSAGEM_VALOR_MENOR_OU_IGUAL_A_ZERO);
-			log.logarOperacao(MENSAGEM_OPERACAO_FALHA_ERRO, OPERACAO_TRANSFERENCIA, MENNSAGEM_VALOR_MENOR_OU_IGUAL_A_ZERO, complementoMensagem);
+			console.imprimir(MENSAGEM_VALOR_MENOR_OU_IGUAL_A_ZERO);
+			log.logarOperacao(MENSAGEM_OPERACAO_FALHA_ERRO, OPERACAO_TRANSFERENCIA, MENSAGEM_VALOR_MENOR_OU_IGUAL_A_ZERO, complementoMensagem);
 		}
 		try {
 			banco.transferir(sessao, contaDebitada, contaCreditada, valor);
@@ -201,6 +202,13 @@ public class CaixaEletronico {
 	}
 	
 	public boolean consultarSaldo(Sessao sessao, String conta) {
+		StringBuilder complementoMensagem = criaComplementoMensagem();
+		complementoMensagem.append(PARAMETRO_NUMERO_CARTAO);
+		complementoMensagem.append(sessao.getCartao());
+		complementoMensagem.append(PARAMETRO_NUMERO_CONTA);
+		complementoMensagem.append(conta);
+		
+//		try
 		return false;
 	}
 	
@@ -213,27 +221,30 @@ public class CaixaEletronico {
 		complementoMensagem.append(PARAMETRO_VALOR_DISPONIVEL_SAQUE);
 		complementoMensagem.append(formatarValor(valorDisponivelSaque));
 		if (valorDisponivelSaque < 0) {
-			console.imprimir("Não é possível inicializar o caixa eletrônico com um valor inferior a zero.");
+			console.imprimir(MENSAGEM_VALOR_MENOR_QUE_ZERO);
 			log.logarOperacao(MENSAGEM_OPERACAO_FALHA_ERRO, OPERACAO_INICIALIZAR_CAIXA, MENSAGEM_VALOR_MENOR_QUE_ZERO, complementoMensagem);
 			return false;
 		}
 		valorDisponivel = valorDisponivelSaque;
 		estado = Estado.OPERANTE;
-		log.logarOperacao(MESAGEM_OPERACAO_SUCESSO, OPERACAO_INICIALIZAR_CAIXA, MENSAGEM_VALOR_MENOR_QUE_ZERO, complementoMensagem);
+		log.logarOperacao(MESAGEM_OPERACAO_SUCESSO, OPERACAO_INICIALIZAR_CAIXA, complementoMensagem);
 		return true;
 	}
 
 	public boolean encerrarCaixa() {
+		StringBuilder complementoMensagem = criaComplementoMensagem();
 		if (sessao != null) {
 			try {
 				banco.finalizarSessao(sessao);
 			} catch (Exception ex) {
 				console.imprimir(ex.getMessage());
+				log.logarOperacao(MENSAGEM_OPERACAO_FALHA_ERRO, OPERACAO_ENCERRAR_CAIXA, ex.getMessage(), complementoMensagem);
 				return false;
 			}
 		}
 
 		estado = Estado.INOPERANTE;
+		log.logarOperacao(MESAGEM_OPERACAO_SUCESSO, OPERACAO_ENCERRAR_CAIXA, complementoMensagem);
 		return true;
 
 	}

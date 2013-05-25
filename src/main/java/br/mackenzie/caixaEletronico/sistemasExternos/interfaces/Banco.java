@@ -17,8 +17,8 @@ public interface Banco {
 	
 	void finalizarSessao(Sessao sessao) throws Exception;
 	
-	void consultarSaldo(Sessao sessao, String conta);
+	void consultarSaldo(Sessao sessao, String conta) throws Exception;
 	
-	void anularOperacao(Sessao sessao);
+	void anularOperacao(Sessao sessao) throws Exception;
 
 }
