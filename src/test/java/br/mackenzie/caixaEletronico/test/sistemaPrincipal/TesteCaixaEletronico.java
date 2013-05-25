@@ -91,13 +91,22 @@ public class TesteCaixaEletronico {
 		assertFalse(result);	
 		assertEquals(outContent.toString(),"Transferencia nao aprovada. O saldo é inferior ao valor da transferencia!");
 	}
-	
-	
-	
-	
-	
-	
-	
+		
+	@Test
+	public void TesteConsultarSaldo() throws Exception {
+		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoConsultaSaldo300Reais(), new ConsoleImpl(), DispenserMockFactory.getDispenserOK(), LogMockFactory.getLogOK(), ImpressoraMockFactory.getImpressoraOK());
+		boolean ligado = caixa.inicializarCaixa(500);
+		assertTrue(ligado);
+		caixa.consultarSaldo(new Sessao("111111"), "aaaaa");		
+	}	
+		
+	@Test
+	public void TesteAnularOperacao() throws Exception {
+		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoCancelaOperacao(), new ConsoleImpl(), DispenserMockFactory.getDispenserOK(), LogMockFactory.getLogOK(), ImpressoraMockFactory.getImpressoraOK());
+		boolean ligado = caixa.inicializarCaixa(500);
+		assertTrue(ligado);
+		caixa.anularOperacao(new Sessao("111111"));	
+	}		
 	
 	@Test
 	public void TesteLigarCaixaOK() throws Exception {

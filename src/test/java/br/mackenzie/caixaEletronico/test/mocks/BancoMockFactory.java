@@ -54,4 +54,19 @@ public class BancoMockFactory {
 		return banco;
 	}	
 	
+	public static Banco getBancoConsultaSaldo300Reais() throws Exception {
+		Banco banco = createMock(Banco.class);
+		expect(banco.consultarSaldo(anyObject(Sessao.class), anyObject(String.class))).andReturn(300.0);
+		replay(banco);
+		return banco;
+	}	
+	
+	public static Banco getBancoCancelaOperacao() throws Exception {
+		Banco banco = createMock(Banco.class);
+		banco.anularOperacao(anyObject(Sessao.class));
+		expectLastCall().once();
+		replay(banco);
+		return banco;
+	}	
+	
 }
