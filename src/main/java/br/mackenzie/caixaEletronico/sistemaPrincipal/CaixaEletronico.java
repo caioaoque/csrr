@@ -174,9 +174,9 @@ public class CaixaEletronico {
 					complementoMensagem);
 		}
 		try {
+			banco.transferir(sessao, contaDebitada, contaCreditada, valor);
 			complementoMensagem.append(PARAMETRO_SALDO_CONTA + contaDebitada + ": " + banco.consultarSaldo(sessao, contaDebitada));
 			complementoMensagem.append(PARAMETRO_SALDO_CONTA + contaCreditada + ": " + banco.consultarSaldo(sessao, contaCreditada));
-			banco.transferir(sessao, contaDebitada, contaCreditada, valor);
 			log.logarOperacao(MESAGEM_OPERACAO_SUCESSO + " %s", OPERACAO_TRANSFERENCIA, complementoMensagem);
 			impressora.imprimirRecibo(complementoMensagem.toString());
 			console.imprimirFormatado(MESAGEM_OPERACAO_SUCESSO, OPERACAO_TRANSFERENCIA);
