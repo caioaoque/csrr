@@ -13,12 +13,11 @@ public interface Banco {
 
 	void transferir(Sessao sessao, String contaDebitada, String contaCreditada, double valor) throws Exception;
 
-	double obterSaldo(Sessao sessao, String conta) throws Exception;
+	double consultarSaldo(Sessao sessao, String conta) throws Exception;
+
+	void anularOperacao(Sessao sessao) throws Exception;
 	
 	void finalizarSessao(Sessao sessao) throws Exception;
 	
-	void consultarSaldo(Sessao sessao, String conta) throws Exception;
-	
-	void anularOperacao(Sessao sessao) throws Exception;
 
 }

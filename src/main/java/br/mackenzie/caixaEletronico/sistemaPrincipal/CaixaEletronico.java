@@ -98,7 +98,7 @@ public class CaixaEletronico {
 			try {
 				banco.sacar(sessao, conta, valor);
 				complementoMensagem.append(PARAMETRO_SALDO_ATUAL);
-				complementoMensagem.append(formatarValor(banco.obterSaldo(sessao, conta)));
+				complementoMensagem.append(formatarValor(banco.consultarSaldo(sessao, conta)));
 				dispenser.darNotas(valor);
 
 				log.logarOperacao(MESAGEM_OPERACAO_SUCESSO, OPERACAO_SAQUE, complementoMensagem);
@@ -143,7 +143,7 @@ public class CaixaEletronico {
 			try {
 				banco.iniciarDeposito(sessao, conta, valor);
 				complementoMensagem.append(PARAMETRO_SALDO_ATUAL);
-				complementoMensagem.append(formatarValor(banco.obterSaldo(sessao, conta)));
+				complementoMensagem.append(formatarValor(banco.consultarSaldo(sessao, conta)));
 
 				log.logarOperacao(MESAGEM_OPERACAO_SUCESSO, OPERACAO_INICIALIZACAO_DEPOSITO, complementoMensagem);
 			} catch (Exception ex) {
@@ -208,7 +208,9 @@ public class CaixaEletronico {
 		complementoMensagem.append(PARAMETRO_NUMERO_CONTA);
 		complementoMensagem.append(conta);
 		
-//		try
+//		try {
+//			banco.consultarSaldo(sessao, conta);
+//		}
 		return false;
 	}
 	
