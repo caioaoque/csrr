@@ -2,6 +2,7 @@ package br.mackenzie.caixaEletronico.test.sistemaPrincipal;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -21,7 +22,7 @@ public class TesteCaixaEletronico {
 	
 	private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
 	private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
-
+	
 	@Before
 	public void setUpStreams() {
 	    System.setOut(new PrintStream(outContent));
@@ -37,6 +38,8 @@ public class TesteCaixaEletronico {
 	@Test
 	public void TesteValidacaoSenhaInvalida() throws Exception {
 		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoSenhaInvalida(), new ConsoleImpl(), DispenserMockFactory.getDispenserOK(), LogMockFactory.getLogOK(), ImpressoraMockFactory.getImpressoraOK() );		
+		boolean ligado = caixa.ligarCaixa(500);
+		assertTrue(ligado);
 		boolean result = caixa.iniciarSessao("12345678", "aaaaa", "98765");		
 		assertFalse(result);	
 		assertEquals(outContent.toString(),"Senha Invalida");
@@ -45,6 +48,8 @@ public class TesteCaixaEletronico {
 	@Test
 	public void TesteSaqueCaixaSemDinheiro() throws Exception {
 		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoSenhaInvalida(), new ConsoleImpl(), DispenserMockFactory.getDispenserOK(), LogMockFactory.getLogOK(), ImpressoraMockFactory.getImpressoraOK());
+		boolean ligado = caixa.ligarCaixa(500);
+		assertTrue(ligado);
 		boolean result = caixa.sacarValor(200000.0, "sessao");		
 		assertFalse(result);	
 		assertEquals(outContent.toString(),"O valor solicitado é superior ao disponível para saque.");
@@ -53,11 +58,27 @@ public class TesteCaixaEletronico {
 	
 	@Test
 	public void TesteBancoNaoAprovaSaque() throws Exception {
-		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoSenhaInvalida(), new ConsoleImpl(), DispenserMockFactory.getDispenserOK(), LogMockFactory.getLogOK(), ImpressoraMockFactory.getImpressoraOK());
-		boolean result = caixa.sacarValor(1, "sessao");		
+		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoNaoAprovaSaque(), new ConsoleImpl(), DispenserMockFactory.getDispenserOK(), LogMockFactory.getLogOK(), ImpressoraMockFactory.getImpressoraOK());
+		boolean ligado = caixa.ligarCaixa(500);
+		assertTrue(ligado);
+		boolean result = caixa.sacarValor(10, "sessao");		
 		assertFalse(result);	
 		assertEquals(outContent.toString(),"Saque Nao Aprovado.");
 	}
+	
+	@Test
+	public void TesteBancoNaoAprovaDeposito() throws Exception {
+		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoNaoAprovaDeposito(), new ConsoleImpl(), DispenserMockFactory.getDispenserOK(), LogMockFactory.getLogOK(), ImpressoraMockFactory.getImpressoraOK());
+		boolean ligado = caixa.ligarCaixa(500);
+		assertTrue(ligado);
+		boolean result2 = caixa.iniciarSessao("12345678", "aaaaa", "98765");		
+		assertTrue(result2);
+		boolean result = caixa.depositarValor(50, "111111", "sessao");		
+		assertFalse(result);	
+		assertEquals(outContent.toString(),"Deposito Nao Aprovado.");
+	}
+	
+	
 	
 	
 }
