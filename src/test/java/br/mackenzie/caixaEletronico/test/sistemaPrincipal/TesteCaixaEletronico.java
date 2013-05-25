@@ -75,7 +75,7 @@ public class TesteCaixaEletronico {
 		assertTrue(ligado);
 		boolean result2 = caixa.iniciarSessao("12345678", "aaaaa", "98765");		
 		assertTrue(result2);
-		boolean result = caixa.depositarValor(50.0, "conta", new Sessao("111111"));	
+		boolean result = caixa.depositarValor(new Sessao("111111"), "conta", 50.0);	
 		assertFalse(result);	
 		assertEquals(outContent.toString(),"Deposito Nao Aprovado.");
 	}
