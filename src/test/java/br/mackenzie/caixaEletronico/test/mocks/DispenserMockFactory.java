@@ -1,12 +1,12 @@
 package br.mackenzie.caixaEletronico.test.mocks;
 
-import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.createNiceMock;
 import br.mackenzie.caixaEletronico.sistemasExternos.interfaces.Dispenser;
 
 public class DispenserMockFactory {
 
 	public static Dispenser getDispenserOK() throws Exception {
-		Dispenser dispenser = createMock(Dispenser.class);
+		Dispenser dispenser = createNiceMock(Dispenser.class);
 		return dispenser;		
 	}
 

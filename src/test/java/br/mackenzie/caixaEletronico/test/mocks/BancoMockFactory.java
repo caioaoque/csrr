@@ -11,6 +11,12 @@ import br.mackenzie.caixaEletronico.sistemasExternos.interfaces.Banco;
 
 public class BancoMockFactory {
 
+	public static Banco getBancoOK() throws Exception {
+		Banco banco = createNiceMock(Banco.class);
+		replay(banco);
+		return banco;
+	}	
+	
 	public static Banco getBancoSenhaInvalida() throws Exception {
 		Banco banco = createMock(Banco.class);
 		expect(banco.iniciarSessao(anyObject(String.class),	anyObject(String.class), anyObject(String.class))).andThrow(new Exception("Senha Invalida"));
@@ -22,20 +28,21 @@ public class BancoMockFactory {
 		Sessao sessao = new Sessao("111111");
 		Banco banco = createMock(Banco.class);		
 		expect(banco.iniciarSessao(anyObject(String.class),	anyObject(String.class), anyObject(String.class))).andStubReturn(sessao);
-		banco.sacar(sessao, anyObject(String.class), anyDouble() );
+		banco.sacar(anyObject(Sessao.class), anyObject(String.class), anyDouble());
 		expectLastCall().andThrow(new Exception("Saque Nao Aprovado."));
 		replay(banco);
 		return banco;
 	}
 
-//	public static Banco getBancoNaoAprovaDeposito() throws Exception {
-//		Banco banco = createMock(Banco.class);
-//		expect(banco.iniciarSessao(anyObject(String.class),	anyObject(String.class), anyObject(String.class)));
-//		banco.iniciarDeposito(anyObject(String.class), anyObject(String.class), anyObject(Double.class));		
-//		expectLastCall().andThrow(new Exception("Deposito Nao Aprovado."));
-//		replay(banco);
-//		return banco;
-//	}
+	public static Banco getBancoNaoAprovaDeposito() throws Exception {
+		Sessao sessao = new Sessao("111111");
+		Banco banco = createMock(Banco.class);
+		expect(banco.iniciarSessao(anyObject(String.class),	anyObject(String.class), anyObject(String.class))).andStubReturn(sessao);
+		banco.iniciarDeposito(anyObject(Sessao.class), anyObject(String.class), anyDouble());		
+		expectLastCall().andThrow(new Exception("Deposito Nao Aprovado."));
+		replay(banco);
+		return banco;
+	}
 
 	
 }

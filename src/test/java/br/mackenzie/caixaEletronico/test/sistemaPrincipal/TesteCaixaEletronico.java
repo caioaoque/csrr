@@ -48,7 +48,7 @@ public class TesteCaixaEletronico {
 	
 	@Test
 	public void TesteSaqueCaixaSemDinheiro() throws Exception {
-		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoSenhaInvalida(), new ConsoleImpl(), DispenserMockFactory.getDispenserOK(), LogMockFactory.getLogOK(), ImpressoraMockFactory.getImpressoraOK());
+		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoOK(), new ConsoleImpl(), DispenserMockFactory.getDispenserOK(), LogMockFactory.getLogOK(), ImpressoraMockFactory.getImpressoraOK());
 		boolean ligado = caixa.ligarCaixa(500);
 		assertTrue(ligado);
 		boolean result = caixa.sacarValor(200000.0,new Sessao("111111"), "222222");		
@@ -67,19 +67,19 @@ public class TesteCaixaEletronico {
 		assertEquals(outContent.toString(),"Saque Nao Aprovado.");
 	}
 	
-//	
-//	@Test
-//	public void TesteBancoNaoAprovaDeposito() throws Exception {
-//		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoNaoAprovaDeposito(), new ConsoleImpl(), DispenserMockFactory.getDispenserOK(), LogMockFactory.getLogOK(), ImpressoraMockFactory.getImpressoraOK());
-//		boolean ligado = caixa.ligarCaixa(500);
-//		assertTrue(ligado);
-//		boolean result2 = caixa.iniciarSessao("12345678", "aaaaa", "98765");		
-//		assertTrue(result2);
-//		boolean result = caixa.depositarValor(50, "111111", "sessao");		
-//		assertFalse(result);	
-//		assertEquals(outContent.toString(),"Deposito Nao Aprovado.");
-//	}
-//	
+	
+	@Test
+	public void TesteBancoNaoAprovaDeposito() throws Exception {
+		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoNaoAprovaDeposito(), new ConsoleImpl(), DispenserMockFactory.getDispenserOK(), LogMockFactory.getLogOK(), ImpressoraMockFactory.getImpressoraOK());
+		boolean ligado = caixa.ligarCaixa(500);
+		assertTrue(ligado);
+		boolean result2 = caixa.iniciarSessao("12345678", "aaaaa", "98765");		
+		assertTrue(result2);
+		boolean result = caixa.depositarValor(50.0, "conta", new Sessao("111111"));	
+		assertFalse(result);	
+		assertEquals(outContent.toString(),"Deposito Nao Aprovado.");
+	}
+	
 	
 	
 	
