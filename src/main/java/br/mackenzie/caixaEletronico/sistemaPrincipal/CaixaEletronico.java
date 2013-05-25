@@ -1,5 +1,7 @@
 package br.mackenzie.caixaEletronico.sistemaPrincipal;
 
+import java.text.DecimalFormat;
+
 import br.mackenzie.caixaEletronico.objetosCompartilhados.Sessao;
 import br.mackenzie.caixaEletronico.sistemasExternos.interfaces.Banco;
 import br.mackenzie.caixaEletronico.sistemasExternos.interfaces.Console;
@@ -9,6 +11,10 @@ import br.mackenzie.caixaEletronico.sistemasExternos.interfaces.Log;
 
 public class CaixaEletronico {
 
+	private static final String PARAMETRO_SALDO_ATUAL = ", saldo atual: ";
+	private static final String PARAMETRO_VALOR_SACADO = ", valor sacado: ";
+	private static final String PARAMETRO_NUMERO_CONTA = ", número da conta: ";
+	private static final String PARAMETRO_NUMERO_CARTAO = "Número do cartão: ";
 	private static final String MENSAGEM_OPERACAO_FALHA = "Erro ao realizar operação de %s.";
 	private static final String OPERACAO_SAQUE = "saque";
 	private static final String MESAGEM_OPERACAO_SUCESSO = "A operação de %s foi realizada com sucesso. %s";
@@ -63,19 +69,26 @@ public class CaixaEletronico {
 			try {
 				banco.sacar(sessao, conta, valor);
 				dispenser.darNotas(valor);
-				StringBuilder complementoMensagem = new StringBuilder("Número do cartão: ");
+				StringBuilder complementoMensagem = new StringBuilder(PARAMETRO_NUMERO_CARTAO);
 				complementoMensagem.append(sessao.getCartao());
-				complementoMensagem.append("Número da conta: ");
-				// TODO Continuar
+				complementoMensagem.append(PARAMETRO_NUMERO_CONTA);
+				complementoMensagem.append(PARAMETRO_VALOR_SACADO);
+				complementoMensagem.append(formatarValor(valor));
+				complementoMensagem.append(PARAMETRO_SALDO_ATUAL);
+				complementoMensagem.append(formatarValor(banco.obterSaldo(sessao, conta)));
 
 				log.logarOperacao(MESAGEM_OPERACAO_SUCESSO, OPERACAO_SAQUE, complementoMensagem);
-				// impressora.
+				impressora.imprimirRecibo(complementoMensagem.toString());
 			} catch (Exception ex) {
 				console.imprimir(ex.getMessage());
 				log.logarTransacao(MENSAGEM_OPERACAO_FALHA, ex, OPERACAO_SAQUE);
 			}
 		}
 		return false;
+	}
+
+	private static String formatarValor(double valor) {
+		return new DecimalFormat("$0.00").format(valor);
 	}
 
 	public boolean depositarValor(double valor, String conta, Sessao sessao) {
