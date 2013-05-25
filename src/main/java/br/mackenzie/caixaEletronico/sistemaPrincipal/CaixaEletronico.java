@@ -4,6 +4,9 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static br.mackenzie.caixaEletronico.sistemaPrincipal.ConstantesMensagens.*;
+import static br.mackenzie.caixaEletronico.sistemaPrincipal.ConstantesOperacoes.*;
+import static br.mackenzie.caixaEletronico.sistemaPrincipal.ConstantesParametros.*;
 import br.mackenzie.caixaEletronico.objetosCompartilhados.Sessao;
 import br.mackenzie.caixaEletronico.sistemasExternos.interfaces.Banco;
 import br.mackenzie.caixaEletronico.sistemasExternos.interfaces.Console;
@@ -12,33 +15,6 @@ import br.mackenzie.caixaEletronico.sistemasExternos.interfaces.Impressora;
 import br.mackenzie.caixaEletronico.sistemasExternos.interfaces.Log;
 
 public class CaixaEletronico {
-
-	private static final String PARAMETRO_LOCALIZACAO = ", localização: São Paulo";
-	private static final String PARAMETRO_HORA = ", hora: ";
-	private static final String OPERACAO_INICIALIZACAO_DEPOSITO = "inicialização de depósito";
-	private static final String OPERACAO_DEPOSITAR_ENVELOPE = "depósito de envelope";
-	private static final String OPERACAO_TRANSFERENCIA = "transferência";
-	private static final String OPERACAO_INICIALIZAR_CAIXA = "inicialização do caixa eletrônico";
-	private static final String OPERACAO_ENCERRAR_CAIXA = "encerramento do caixa eletrônico";
-	private static final String PARAMETRO_SALDO_ATUAL = ", saldo atual: ";
-	private static final String PARAMETRO_VALOR_SACADO = ", valor sacado: ";
-	private static final String PARAMETRO_VALOR_DEPOSITADO = ", valor depositado: ";
-	private static final String PARAMETRO_VALOR_TRANSFERIDO = ", valor transferido: ";
-	private static final String PARAMETRO_VALOR_DISPONIVEL_SAQUE = ", valor disponível para saque: ";
-	private static final String PARAMETRO_NUMERO_CONTA = ", número da conta: ";
-	private static final String PARAMETRO_NUMERO_CONTA_DEBITADA = ", número da conta debitada: ";
-	private static final String PARAMETRO_NUMERO_CONTA_CREDITADA = ", número da conta creditada: ";
-	private static final String PARAMETRO_DATA = "Data: ";
-	private static final String PARAMETRO_NUMERO_CARTAO = "número do cartão: ";
-	private static final String MENSAGEM_OPERACAO_FALHA = "Erro ao realizar operação de %s.";
-	private static final String MENSAGEM_OPERACAO_FALHA_ERRO = "Erro ao realizar operação de %s. Erro: \"%s\". Informações complementares: \"%s\"";
-	private static final String OPERACAO_SAQUE = "saque";
-	private static final String MESAGEM_OPERACAO_SUCESSO = "A operação de %s foi realizada com sucesso. %s";
-	private static final String MENSAGEM_SACAR_VALOR_SUPERIOR_AO_DISPONIVEL = "O valor solicitado é superior ao disponível para saque.";
-	private static final String MENSAGEM_SACAR_VALOR_DEVE_SER_MULTIPLO_DE_10 = "Valor inválido. Entre com um valor múltiplo de dez.";
-	private static final String MENSAGEM_VALOR_MENOR_QUE_ZERO = "Valor inválido. Entre com um valor maior ou igual a zero.";
-	private static final String MENSAGEM_VALOR_MENOR_OU_IGUAL_A_ZERO = "Valor inválido. Entre com um valor maior que zero.";
-	private static final String MENSAGEM_CAIXA_INOPERANTE = "Não foi possível realizar a operação pois o caixa não se encontra operante no momento.";
 
 	private static enum Estado {
 		OPERANTE, INOPERANTE;
@@ -101,8 +77,10 @@ public class CaixaEletronico {
 				complementoMensagem.append(formatarValor(banco.consultarSaldo(sessao, conta)));
 				dispenser.darNotas(valor);
 
-				log.logarOperacao(MESAGEM_OPERACAO_SUCESSO, OPERACAO_SAQUE, complementoMensagem);
+				log.logarOperacao(MESAGEM_OPERACAO_SUCESSO + " %s", OPERACAO_SAQUE, complementoMensagem);
 				impressora.imprimirRecibo(complementoMensagem.toString());
+				console.imprimirFormatado(MESAGEM_OPERACAO_SUCESSO, OPERACAO_SAQUE);
+				return true;
 			} catch (Exception ex) {
 				console.imprimir(ex.getMessage());
 				log.logarOperacao(MENSAGEM_OPERACAO_FALHA, OPERACAO_SAQUE, ex.getMessage(), complementoMensagem);
@@ -129,7 +107,7 @@ public class CaixaEletronico {
 		StringBuilder complementoMensagem = criaComplementoMensagem();
 		complementoMensagem.append(PARAMETRO_NUMERO_CARTAO);
 		complementoMensagem.append(sessao.getCartao());
-		complementoMensagem.append(PARAMETRO_NUMERO_CONTA);
+		complementoMensagem.append(PARAMETRO_NUMERO_CONTA_CREDITADA);
 		complementoMensagem.append(conta);
 		complementoMensagem.append(PARAMETRO_VALOR_DEPOSITADO);
 		complementoMensagem.append(formatarValor(valor));
@@ -144,8 +122,10 @@ public class CaixaEletronico {
 				banco.iniciarDeposito(sessao, conta, valor);
 				complementoMensagem.append(PARAMETRO_SALDO_ATUAL);
 				complementoMensagem.append(formatarValor(banco.consultarSaldo(sessao, conta)));
-
-				log.logarOperacao(MESAGEM_OPERACAO_SUCESSO, OPERACAO_INICIALIZACAO_DEPOSITO, complementoMensagem);
+				log.logarOperacao(MESAGEM_OPERACAO_SUCESSO + " %s" + " %s", OPERACAO_INICIALIZACAO_DEPOSITO, complementoMensagem);
+				impressora.imprimirRecibo(complementoMensagem.toString());
+				console.imprimirFormatado(MESAGEM_OPERACAO_SUCESSO, OPERACAO_INICIALIZACAO_DEPOSITO);
+				return true;
 			} catch (Exception ex) {
 				console.imprimir(ex.getMessage());
 				log.logarOperacao(MENSAGEM_OPERACAO_FALHA, OPERACAO_INICIALIZACAO_DEPOSITO, ex.getMessage(), complementoMensagem);
@@ -165,7 +145,9 @@ public class CaixaEletronico {
 		complementoMensagem.append(conta);
 		try {
 			banco.sinalizarDepositoEnvelope(sessao, conta);
-			log.logarOperacao(MESAGEM_OPERACAO_SUCESSO, OPERACAO_DEPOSITAR_ENVELOPE, complementoMensagem);
+			log.logarOperacao(MESAGEM_OPERACAO_SUCESSO + " %s", OPERACAO_DEPOSITAR_ENVELOPE, complementoMensagem);
+			impressora.imprimirRecibo(complementoMensagem.toString());
+			console.imprimirFormatado(MESAGEM_OPERACAO_SUCESSO, OPERACAO_DEPOSITAR_ENVELOPE);
 			return true;
 		} catch (Exception ex) {
 			console.imprimir(ex.getMessage());
@@ -188,11 +170,16 @@ public class CaixaEletronico {
 			throw new IllegalStateException(MENSAGEM_CAIXA_INOPERANTE);
 		} else if (valor <= 0) {
 			console.imprimir(MENSAGEM_VALOR_MENOR_OU_IGUAL_A_ZERO);
-			log.logarOperacao(MENSAGEM_OPERACAO_FALHA_ERRO, OPERACAO_TRANSFERENCIA, MENSAGEM_VALOR_MENOR_OU_IGUAL_A_ZERO, complementoMensagem);
+			log.logarOperacao(MENSAGEM_OPERACAO_FALHA_ERRO, OPERACAO_TRANSFERENCIA, MENSAGEM_VALOR_MENOR_OU_IGUAL_A_ZERO,
+					complementoMensagem);
 		}
 		try {
+			complementoMensagem.append(PARAMETRO_SALDO_CONTA + contaDebitada + ": " + banco.consultarSaldo(sessao, contaDebitada));
+			complementoMensagem.append(PARAMETRO_SALDO_CONTA + contaCreditada + ": " + banco.consultarSaldo(sessao, contaCreditada));
 			banco.transferir(sessao, contaDebitada, contaCreditada, valor);
-			log.logarOperacao(MESAGEM_OPERACAO_SUCESSO, OPERACAO_TRANSFERENCIA, complementoMensagem);
+			log.logarOperacao(MESAGEM_OPERACAO_SUCESSO + " %s", OPERACAO_TRANSFERENCIA, complementoMensagem);
+			impressora.imprimirRecibo(complementoMensagem.toString());
+			console.imprimirFormatado(MESAGEM_OPERACAO_SUCESSO, OPERACAO_TRANSFERENCIA);
 			return true;
 		} catch (Exception ex) {
 			console.imprimir(ex.getMessage());
@@ -200,22 +187,40 @@ public class CaixaEletronico {
 		}
 		return false;
 	}
-	
+
 	public boolean consultarSaldo(Sessao sessao, String conta) {
 		StringBuilder complementoMensagem = criaComplementoMensagem();
 		complementoMensagem.append(PARAMETRO_NUMERO_CARTAO);
 		complementoMensagem.append(sessao.getCartao());
 		complementoMensagem.append(PARAMETRO_NUMERO_CONTA);
 		complementoMensagem.append(conta);
-		
-//		try {
-//			banco.consultarSaldo(sessao, conta);
-//		}
-		return false;
+		try {
+			double saldo = banco.consultarSaldo(sessao, conta);
+			complementoMensagem.append(PARAMETRO_SALDO_ATUAL);
+			complementoMensagem.append(formatarValor(saldo));
+			log.logarOperacao(MESAGEM_OPERACAO_SUCESSO + " %s", OPERACAO_CONSULTA_SALDO, complementoMensagem);
+			impressora.imprimirRecibo(complementoMensagem.toString());
+			console.imprimirFormatado(MESAGEM_OPERACAO_SUCESSO, OPERACAO_CONSULTA_SALDO);
+			return true;
+		} catch (Exception ex) {
+			log.logarOperacao(MENSAGEM_OPERACAO_FALHA_ERRO, OPERACAO_CONSULTA_SALDO, ex.getMessage(), complementoMensagem);
+			return false;
+		}
 	}
-	
+
 	public boolean anularOperacao(Sessao sessao) {
-		return false;
+		StringBuilder complementoMensagem = criaComplementoMensagem();
+		complementoMensagem.append(PARAMETRO_NUMERO_CARTAO);
+		complementoMensagem.append(sessao.getCartao());
+		try {
+			banco.anularOperacao(sessao);
+			log.logarOperacao(MESAGEM_OPERACAO_SUCESSO + " %s", OPERACAO_ANULAR_OPERACAO, complementoMensagem);
+			console.imprimirFormatado(MESAGEM_OPERACAO_SUCESSO, OPERACAO_ANULAR_OPERACAO);
+			return true;
+		} catch (Exception ex) {
+			log.logarOperacao(MENSAGEM_OPERACAO_FALHA_ERRO, OPERACAO_ANULAR_OPERACAO, ex.getMessage(), complementoMensagem);
+			return false;
+		}
 	}
 
 	public boolean inicializarCaixa(double valorDisponivelSaque) {
@@ -229,7 +234,7 @@ public class CaixaEletronico {
 		}
 		valorDisponivel = valorDisponivelSaque;
 		estado = Estado.OPERANTE;
-		log.logarOperacao(MESAGEM_OPERACAO_SUCESSO, OPERACAO_INICIALIZAR_CAIXA, complementoMensagem);
+		log.logarOperacao(MESAGEM_OPERACAO_SUCESSO + " %s", OPERACAO_INICIALIZAR_CAIXA, complementoMensagem);
 		return true;
 	}
 
@@ -246,7 +251,7 @@ public class CaixaEletronico {
 		}
 
 		estado = Estado.INOPERANTE;
-		log.logarOperacao(MESAGEM_OPERACAO_SUCESSO, OPERACAO_ENCERRAR_CAIXA, complementoMensagem);
+		log.logarOperacao(MESAGEM_OPERACAO_SUCESSO + " %s", OPERACAO_ENCERRAR_CAIXA, complementoMensagem);
 		return true;
 
 	}

@@ -10,6 +10,11 @@ public class ConsoleImpl implements Console {
 	public void imprimir(String texto) {
 		System.out.print(texto);
 	}
+	
+	@Override
+	public void imprimirFormatado(String texto, Object... parametros) {
+		System.out.printf(texto, parametros);
+	}
 
 	@Override
 	public void solicitarEntrada(String texto) {
