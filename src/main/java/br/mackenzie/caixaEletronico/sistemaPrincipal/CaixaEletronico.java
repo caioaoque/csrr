@@ -1,6 +1,7 @@
 package br.mackenzie.caixaEletronico.sistemaPrincipal;
 
 import java.text.DecimalFormat;
+import java.util.Date;
 
 import br.mackenzie.caixaEletronico.objetosCompartilhados.Sessao;
 import br.mackenzie.caixaEletronico.sistemasExternos.interfaces.Banco;
@@ -11,11 +12,15 @@ import br.mackenzie.caixaEletronico.sistemasExternos.interfaces.Log;
 
 public class CaixaEletronico {
 
+	private static final String OPERACAO_INICIALIZACAO_DEPOSITO = "inicialização de depósito";
 	private static final String PARAMETRO_SALDO_ATUAL = ", saldo atual: ";
 	private static final String PARAMETRO_VALOR_SACADO = ", valor sacado: ";
+	private static final String PARAMETRO_VALOR_DEPOSITADO = ", valor depositado: ";
 	private static final String PARAMETRO_NUMERO_CONTA = ", número da conta: ";
-	private static final String PARAMETRO_NUMERO_CARTAO = "Número do cartão: ";
+	private static final String PARAMETRO_DATA = "Data: ";
+	private static final String PARAMETRO_NUMERO_CARTAO = "número do cartão: ";
 	private static final String MENSAGEM_OPERACAO_FALHA = "Erro ao realizar operação de %s.";
+	private static final String MENSAGEM_OPERACAO_FALHA_ERRO = "Erro ao realizar operação de %s. Erro: \"%s\". Informações complementares: \"%s\"";
 	private static final String OPERACAO_SAQUE = "saque";
 	private static final String MESAGEM_OPERACAO_SUCESSO = "A operação de %s foi realizada com sucesso. %s";
 	private static final String MENSAGEM_SACAR_VALOR_SUPERIOR_AO_DISPONIVEL = "O valor solicitado é superior ao disponível para saque.";
@@ -57,49 +62,70 @@ public class CaixaEletronico {
 
 	public boolean sacarValor(double valor, Sessao sessao, String conta) {
 
+		StringBuilder complementoMensagem = criaComplementoMensagem(sessao);
+		complementoMensagem.append(PARAMETRO_NUMERO_CONTA);
+		complementoMensagem.append(PARAMETRO_VALOR_SACADO);
+		complementoMensagem.append(formatarValor(valor));
 		if (estado != Estado.OPERANTE) {
 			throw new IllegalStateException(MENSAGEM_CAIXA_INOPERANTE);
 		} else if (valor <= 0) {
 			console.imprimir(VALOR_MENOR_OU_IGUAL_A_ZERO);
+			log.logarOperacao(MENSAGEM_OPERACAO_FALHA_ERRO, OPERACAO_SAQUE, VALOR_MENOR_OU_IGUAL_A_ZERO, complementoMensagem);
 		} else if (valor % 10 != 0) {
 			console.imprimir(MENSAGEM_SACAR_VALOR_DEVE_SER_MULTIPLO_DE_10);
+			log.logarOperacao(MENSAGEM_OPERACAO_FALHA_ERRO, OPERACAO_SAQUE, MENSAGEM_SACAR_VALOR_DEVE_SER_MULTIPLO_DE_10, complementoMensagem);
 		} else if (valor > this.valorDisponivel) {
 			console.imprimir(MENSAGEM_SACAR_VALOR_SUPERIOR_AO_DISPONIVEL);
+			log.logarOperacao(MENSAGEM_OPERACAO_FALHA_ERRO, OPERACAO_SAQUE, MENSAGEM_SACAR_VALOR_SUPERIOR_AO_DISPONIVEL, complementoMensagem);
 		} else {
 			try {
 				banco.sacar(sessao, conta, valor);
-				dispenser.darNotas(valor);
-				StringBuilder complementoMensagem = new StringBuilder(PARAMETRO_NUMERO_CARTAO);
-				complementoMensagem.append(sessao.getCartao());
-				complementoMensagem.append(PARAMETRO_NUMERO_CONTA);
-				complementoMensagem.append(PARAMETRO_VALOR_SACADO);
-				complementoMensagem.append(formatarValor(valor));
 				complementoMensagem.append(PARAMETRO_SALDO_ATUAL);
 				complementoMensagem.append(formatarValor(banco.obterSaldo(sessao, conta)));
+				dispenser.darNotas(valor);
 
 				log.logarOperacao(MESAGEM_OPERACAO_SUCESSO, OPERACAO_SAQUE, complementoMensagem);
 				impressora.imprimirRecibo(complementoMensagem.toString());
 			} catch (Exception ex) {
 				console.imprimir(ex.getMessage());
-				log.logarTransacao(MENSAGEM_OPERACAO_FALHA, ex, OPERACAO_SAQUE);
+				log.logarOperacao(MENSAGEM_OPERACAO_FALHA, OPERACAO_SAQUE, ex.getMessage(), complementoMensagem);
 			}
 		}
 		return false;
+	}
+
+	private static StringBuilder criaComplementoMensagem(Sessao sessao) {
+		Date dataHora = new Date();
+		StringBuilder complementoMensagem = new StringBuilder(PARAMETRO_DATA);
+		complementoMensagem.append(PARAMETRO_NUMERO_CARTAO);
+		complementoMensagem.append(sessao.getCartao());
+		return complementoMensagem;
 	}
 
 	private static String formatarValor(double valor) {
 		return new DecimalFormat("$0.00").format(valor);
 	}
 
-	public boolean depositarValor(double valor, String conta, Sessao sessao) {
-		if (valor <= 0) {
+	public boolean depositarValor(Sessao sessao, String conta, double valor) {
+		StringBuilder complementoMensagem = criaComplementoMensagem(sessao);
+		complementoMensagem.append(PARAMETRO_NUMERO_CONTA);
+		complementoMensagem.append(PARAMETRO_VALOR_DEPOSITADO);
+		complementoMensagem.append(formatarValor(valor));
+		if (estado != Estado.OPERANTE) {
+			throw new IllegalStateException(MENSAGEM_CAIXA_INOPERANTE);
+		} else if (valor <= 0) {
 			console.imprimir(VALOR_MENOR_OU_IGUAL_A_ZERO);
+			log.logarOperacao(MENSAGEM_OPERACAO_FALHA_ERRO, OPERACAO_SAQUE, VALOR_MENOR_OU_IGUAL_A_ZERO, complementoMensagem);
 		} else {
 			try {
 				banco.iniciarDeposito(sessao, conta, valor);
-				return true;
+				complementoMensagem.append(PARAMETRO_SALDO_ATUAL);
+				complementoMensagem.append(formatarValor(banco.obterSaldo(sessao, conta)));
+				
+				log.logarOperacao(MESAGEM_OPERACAO_SUCESSO, OPERACAO_INICIALIZACAO_DEPOSITO, complementoMensagem);
 			} catch (Exception ex) {
 				console.imprimir(ex.getMessage());
+				log.logarOperacao(MENSAGEM_OPERACAO_FALHA, OPERACAO_INICIALIZACAO_DEPOSITO, ex.getMessage(), complementoMensagem);
 			}
 		}
 		return false;
