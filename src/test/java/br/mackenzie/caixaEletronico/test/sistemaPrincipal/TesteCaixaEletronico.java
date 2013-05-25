@@ -39,7 +39,7 @@ public class TesteCaixaEletronico {
 	@Test
 	public void TesteValidacaoSenhaInvalida() throws Exception {
 		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoSenhaInvalida(), new ConsoleImpl(), DispenserMockFactory.getDispenserOK(), LogMockFactory.getLogOK(), ImpressoraMockFactory.getImpressoraOK() );		
-		boolean ligado = caixa.ligarCaixa(500);
+		boolean ligado = caixa.inicializarCaixa(500);
 		assertTrue(ligado);
 		boolean result = caixa.iniciarSessao("12345678", "aaaaa", "98765");		
 		assertFalse(result);	
@@ -49,7 +49,7 @@ public class TesteCaixaEletronico {
 	@Test
 	public void TesteSaqueCaixaSemDinheiro() throws Exception {
 		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoOK(), new ConsoleImpl(), DispenserMockFactory.getDispenserOK(), LogMockFactory.getLogOK(), ImpressoraMockFactory.getImpressoraOK());
-		boolean ligado = caixa.ligarCaixa(500);
+		boolean ligado = caixa.inicializarCaixa(500);
 		assertTrue(ligado);
 		boolean result = caixa.sacarValor(200000.0,new Sessao("111111"), "222222");		
 		assertFalse(result);	
@@ -60,7 +60,7 @@ public class TesteCaixaEletronico {
 	@Test
 	public void TesteBancoNaoAprovaSaque() throws Exception {
 		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoNaoAprovaSaque(), new ConsoleImpl(), DispenserMockFactory.getDispenserOK(), LogMockFactory.getLogOK(), ImpressoraMockFactory.getImpressoraOK());
-		boolean ligado = caixa.ligarCaixa(500);
+		boolean ligado = caixa.inicializarCaixa(500);
 		assertTrue(ligado);
 		boolean result = caixa.sacarValor(10.0, new Sessao("111111"), "222222");		
 		assertFalse(result);	
@@ -71,7 +71,7 @@ public class TesteCaixaEletronico {
 	@Test
 	public void TesteBancoNaoAprovaDeposito() throws Exception {
 		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoNaoAprovaDeposito(), new ConsoleImpl(), DispenserMockFactory.getDispenserOK(), LogMockFactory.getLogOK(), ImpressoraMockFactory.getImpressoraOK());
-		boolean ligado = caixa.ligarCaixa(500);
+		boolean ligado = caixa.inicializarCaixa(500);
 		assertTrue(ligado);
 		boolean result2 = caixa.iniciarSessao("12345678", "aaaaa", "98765");		
 		assertTrue(result2);
@@ -83,7 +83,7 @@ public class TesteCaixaEletronico {
 	@Test
 	public void TesteTransferenciaSemSaldo() throws Exception {
 		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoNaoRealizaTransferencia(), new ConsoleImpl(), DispenserMockFactory.getDispenserOK(), LogMockFactory.getLogOK(), ImpressoraMockFactory.getImpressoraOK());
-		boolean ligado = caixa.ligarCaixa(500);
+		boolean ligado = caixa.inicializarCaixa(500);
 		assertTrue(ligado);
 		boolean result2 = caixa.iniciarSessao("12345678", "aaaaa", "98765");		
 		assertTrue(result2);
@@ -102,21 +102,21 @@ public class TesteCaixaEletronico {
 	@Test
 	public void TesteLigarCaixaOK() throws Exception {
 		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoOK(), new ConsoleImpl(), DispenserMockFactory.getDispenserOK(), LogMockFactory.getLogOK(), ImpressoraMockFactory.getImpressoraOK());
-		boolean ligado = caixa.ligarCaixa(500);
+		boolean ligado = caixa.inicializarCaixa(500);
 		assertTrue(ligado);
 	}
 	
 	@Test
 	public void TesteLigarCaixaErroValor() throws Exception {
 		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoOK(), new ConsoleImpl(), DispenserMockFactory.getDispenserOK(), LogMockFactory.getLogOK(), ImpressoraMockFactory.getImpressoraOK());
-		boolean ligado = caixa.ligarCaixa(-500);
+		boolean ligado = caixa.inicializarCaixa(-500);
 		assertFalse(ligado);
 	}
 	
 	@Test
 	public void TesteDesligarCaixaOK() throws Exception {
 		CaixaEletronico caixa = new CaixaEletronico(BancoMockFactory.getBancoOK(), new ConsoleImpl(), DispenserMockFactory.getDispenserOK(), LogMockFactory.getLogOK(), ImpressoraMockFactory.getImpressoraOK());
-		boolean desligado = caixa.desligarCaixa();
+		boolean desligado = caixa.encerrarCaixa();
 		assertTrue(desligado);
 	}
 		
